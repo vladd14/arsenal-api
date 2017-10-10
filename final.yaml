@@ -601,30 +601,6 @@ paths:
 
 components:
   schemas:
-    Money:
-      description: Структура хранения денежных средств
-      type: object
-      properties:
-        value:
-          description: Значение
-          type: number
-          format: decimal
-        currency:
-          description: Валюта
-          type: string
-          enum:
-            - USD
-            - EUR
-            - RUB
-          default: RUB
-
-    Currency:
-      type: string
-      enum:
-        - USD
-        - EUR
-        - RUB
-      default: RUB
 
 
     InsurenceRulesType:
@@ -664,7 +640,6 @@ components:
               items:
                 $ref: '#/components/schemas/ProductType'
         - $ref: '#/components/schemas/Paginator'
-
 
     ProductState:
       description: Структура описывающая статус договора
@@ -765,7 +740,6 @@ components:
           description: Код валюты СП
           $ref: '#/components/schemas/Currency'
 
-
     ProductBasePolicyFields:
       type: object
       properties:
@@ -788,7 +762,6 @@ components:
         - $ref: '#/components/schemas/ProductBasePolicyFields'
         - $ref: '#/components/schemas/Person'
         - $ref: '#/components/schemas/ProductBaseReadOnlyFields'
-
 
     ProductBaseList:
       description: Список расчетов / договоров
@@ -1041,17 +1014,13 @@ components:
       description: Подписанный запрос на выпуск договора страхования
       allOf:
         - $ref: '#/components/schemas/SignedData'
-
     signedResponseProduct:
       description: Подписанный запрос на выпуск договора страхования
       allOf:
         - $ref: '#/components/schemas/SignedData'
-        #- $ref: '#/components/schemas/Product'
-
     filterProductComboFlight:
       description: Фильтр для ProductComboFlight
       type: object
-
     ProductComboFlightList:
       description: Список ProductComboFlight
       allOf:
@@ -1062,11 +1031,9 @@ components:
               items:
                 $ref: '#/components/schemas/ProductComboFlight'
         - $ref: '#/components/schemas/Paginator'
-
     updateProductComboFlight:
       description: Параметры для обновления ProductComboFlight
       type: object
-
     ProductComboFlight:
       description: Модель ProductComboFlight
       type: object
@@ -1079,7 +1046,6 @@ components:
     filterProductVZR:
       description: Фильтр для ProductVZR
       type: object
-
     ProductVZRList:
       description: Список ProductVZR
       allOf:
@@ -1090,21 +1056,18 @@ components:
               items:
                 $ref: '#/components/schemas/ProductVZR'
         - $ref: '#/components/schemas/Paginator'
-
     updateProductVZR:
       description: Параметры для обновления ProductVZR
       type: object
 
       allOf:
         - $ref: '#/components/schemas/createProductVZR'
-
     ProductVZR:
       description: Модель ProductVZR
       type: object
       allOf:
         - $ref: '#/components/schemas/ProductBase'
         - $ref: '#/components/schemas/ParamsVZR'
-
     ParamsVZR:
       description: Параметры для ProductVZR
       type: object
@@ -1141,12 +1104,11 @@ components:
         flights:
           $ref: '#/components/schemas/FlightList'
 
-
     ProductPdf:
       description: полис в формате Pdf
       type: string
       format: binary
-      
+
     Paginator:
       description: Пагинатор
       type: object
@@ -1162,7 +1124,13 @@ components:
           description: Ссылка на предыдущую страницу
           type: string
           format: url
-
+    Currency:
+      type: string
+      enum:
+        - USD
+        - EUR
+        - RUB
+      default: RUB
 
 
   responses:
