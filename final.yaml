@@ -22,186 +22,12 @@ tags:
   - name: Products
     description: Описание договоров страхования
   - name: Product
-    description: Договор страхования
+    description: 'Договор страхования (расчет полиса, оформление, отмена)'
+  - name: Policy
+    description: Pdf представление оформленного полиса
+
 paths:
-  /products:
-    get:
-      description: возвращает массив всех доступных продуктов
-      operationId: getProductTypesList
-      tags:
-        - Products
-      
-      responses:
-        '200':
-          description: Список всех доступных продуктов
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProductTypesList'
-  
-  '/products/{product_type_id}':
-    parameters:
-      - name: product_type_id
-        description: id продукта
-        in: path
-        required: true
-        
-        schema:
-          type: integer
-    get:
-      description: возвращает описание продукта по его id
-      tags:
-        - Products
-      operationId: getProductDescription
-      
-      responses:
-        '200':
-          description: 'продукт найден, данные возвращены'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProductType'
-        '404':
-          $ref: '#/components/responses/NotFound'
 
-  /product:
-    get:
-      description: >-
-        ищет существующие договора / расчеты по параметрам в пределах области
-        видимости
-      operationId: getPaginatedProductList
-      tags:
-        - Product
-      
-      requestBody:
-        description: фильтр по продуктам
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/filterPaginatedProductList'
-      responses:
-        '200':
-          description: возвращает информацию о договорах
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedProductList'
-        '400':
-          $ref: '#/components/responses/WrongParams'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    post:
-      description: создает расчет договора страхования
-      operationId: createProduct
-      tags:
-        - Product
-      requestBody:
-        description: параметры договора страхования
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/createProduct'
-      responses:
-        '200':
-          description: возврат короткого продукта если он создан
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-        '400':
-          $ref: '#/components/responses/WrongParams'
-        '403':
-          $ref: '#/components/responses/ActionNotPermitted'
-  
-  '/product/{product_id}':
-    parameters:
-      - name: product_id
-        description: id продукта
-        in: path
-        required: true
-        schema:
-          type: integer
-    get:
-      description: возвращает информацию о договоре
-      operationId: getProductInfo
-      tags:
-        - Product
-      responses:
-        '200':
-          description: возвращает информацию о договоре
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      description: изменяет параметры продукта (договора)
-      operationId: updateProduct
-      tags:
-        - Product
-      requestBody:
-        description: параметры договора страхования
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/updateProduct'
-      responses:
-        '200':
-          description: возвращает информацию о договоре в случае успеха
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-        '400':
-          $ref: '#/components/responses/WrongParams'
-        '403':
-          $ref: '#/components/responses/ActionNotPermitted'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    post:
-      description: подтверждение на выпуск (оформление) продукта
-      operationId: publishProduct
-      tags:
-        - Product
-      requestBody:
-        description: Параметры подтверждающие валидность запроса
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/signedPostProduct'
-
-      responses:
-        '200':
-          description: возврат короткого продукта если он создан
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/signedResponseProduct'
-        '400':
-          $ref: '#/components/responses/WrongParams'
-        '403':
-          $ref: '#/components/responses/ActionNotPermitted'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      description: Аннулирование договора
-      operationId: annulmentProduct
-      tags:
-        - Product
-      responses:
-        '200':
-          description: возвращает информацию о договоре в случае успеха
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-        '403':
-          $ref: '#/components/responses/ActionNotPermitted'
-        '404':
-          $ref: '#/components/responses/NotFound'
   /agent:
     get:
       description: Получить список агентов
@@ -214,7 +40,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentParams'
+              $ref: '#/components/schemas/Agent'
       responses:
         '200':
           description: возвращает информацию об агентах
@@ -237,9 +63,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentParams'
+              $ref: '#/components/schemas/createAgent'
       responses:
-        '200':
+        '201':
           description: возвращает созданного Агента
           content:
             application/json:
@@ -249,12 +75,11 @@ paths:
           $ref: '#/components/responses/WrongParams'
         '403':
           $ref: '#/components/responses/ActionNotPermitted'
-        '404':
-          $ref: '#/components/responses/NotFound'
 
-  '/agent/{agent_id}':
+
+  '/agent/{id}':
     parameters:
-      - name: agent_id
+      - name: id
         description: id Агента
         in: path
         required: true
@@ -279,20 +104,20 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      description: Изменить агента
+      description: Изменить агента (обновить все поля)
       operationId: updateAgent
       tags:
         - Agent
       requestBody:
-        description: параметры для изменения Агента
+        description: параметры для изменения Агента 
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentParams'
+              $ref: '#/components/schemas/createAgent'
       responses:
         '200':
-          description: возвращает информацию о договорах
+          description: возвращает информацию об Агенте
           content:
             application/json:
               schema:
@@ -303,6 +128,476 @@ paths:
           $ref: '#/components/responses/ActionNotPermitted'
         '404':
           $ref: '#/components/responses/NotFound'
+    patch:
+      description: Изменить агента (обновить некоторые поля)
+      operationId: patchAgent
+      tags:
+        - Agent
+      requestBody:
+        description: параметры для изменения Агента 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/patchAgent'
+      responses:
+        '200':
+          description: возвращает информацию об Агенте
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  
+
+
+
+
+  /product:
+    get:
+      description: >-
+        ищет существующие договора / расчеты по параметрам в пределах области
+        видимости
+      operationId: getProductBaseList
+      tags:
+        - Product
+      
+      requestBody:
+        description: фильтр по продуктам
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filterPaginatedProductList'
+      responses:
+        '200':
+          description: возвращает общую информацию о договорах
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductBaseList'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  '/product/{id}':
+    parameters:
+      - name: id
+        description: id продукта
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      description: возвращает общую информацию о договоре
+      operationId: getProductInfo
+      tags:
+        - Product
+      responses:
+        '200':
+          description: возвращает общую информацию о договоре
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductBase'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+  /product/{id}/publish:
+    parameters:
+      - name: id
+        description: id продукта
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      description: подтверждение на выпуск (оформление) продукта
+      operationId: publishProduct
+      tags:
+        - Product
+      requestBody:
+        description: Параметры подтверждающие валидность запроса
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signedPostProduct'
+
+      responses:
+        '201':
+          description: возврат общей информации о договоре если он выпущен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductBase'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+
+  /product/{id}/cancel:
+    parameters:
+      - name: id
+        description: id продукта
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      description: Аннулирование договора
+      operationId: annulmentProduct
+      tags:
+        - Product
+      requestBody:
+        description: Параметры подтверждающие валидность запроса
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signedPostProduct'
+
+      responses:
+        '201':
+          description: возврат общей информации о договоре если он аннулирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductBase'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /product/combo-flight:
+    get:
+      description: Получить список договоров комбинированного страхования пассажиров
+      operationId: getProductComboFlightList
+      tags:
+        - Product
+      requestBody:
+        description: 'фильтр по парамтрам договора'
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filterProductComboFlight'
+      responses:
+        '200':
+          description: возвращает информацию о договорах
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductComboFlightList'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+    post:
+      description: Создать расчет договора комбинированного страхования пассажиров
+      operationId: createProductComboFlight
+      tags:
+        - Product
+      requestBody:
+        description: параметры для создания расчета договора комбинированного страхования пассажиров
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createProductComboFlight'
+      responses:
+        '201':
+          description: возвращает созданный расчет договора комбинированного страхования пассажиров
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductComboFlight'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+
+  '/product/combo-flight/{id}':
+    parameters:
+      - name: id
+        description: id расчет договора комбинированного страхования пассажиров
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Product
+      description: Получить описание расчета договора комбинированного страхования пассажиров
+      operationId: getProductComboFlight
+      responses:
+        '200':
+          description: возвращает информацию о расчете договора комбинированного страхования пассажиров
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductComboFlight'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      description: Изменить расчет (обновить все поля)
+      operationId: updateProductComboFlight
+      tags:
+        - Product
+      requestBody:
+        description: параметры для изменения ProductComboFlight
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createProductComboFlight'
+      responses:
+        '200':
+          description: возвращает информацию о расчете
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductComboFlight'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      description: Изменить расчет (обновить некоторые поля)
+      operationId: patchProductComboFlight
+      tags:
+        - Product
+      requestBody:
+        description: параметры для изменения расчета
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateProductComboFlight'
+      responses:
+        '200':
+          description: возвращает информацию о расчете
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductComboFlight'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /product/vzr:
+    get:
+      description: Получить список договоров страхования выезжающих за рубеж
+      operationId: getProductVZRList
+      tags:
+        - Product
+      requestBody:
+        description: 'фильтр по параметрам договора'
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/filterProductVZR'
+      responses:
+        '200':
+          description: возвращает информацию о договорах
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductVZRList'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+    post:
+      description: Создать расчет договора страхования выезжающих за рубеж
+      operationId: createProductVZR
+      tags:
+        - Product
+      requestBody:
+        description: параметры для создания расчета страхования выезжающих за рубеж
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createProductVZR'
+      responses:
+        '201':
+          description: возвращает созданный расчет договора страхования выезжающих за рубеж
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductVZR'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+
+
+  '/product/vzr/{id}':
+    parameters:
+      - name: id
+        description: id расчет договора страхования выезжающих за рубеж
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Product
+      description: Получить описание расчета договора страхования выезжающих за рубеж
+      operationId: getProductVZR
+      responses:
+        '200':
+          description: возвращает информацию о расчете страхования выезжающих за рубеж
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductVZR'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      description: Изменить расчет (обновить все поля)
+      operationId: updateProductVZR
+      tags:
+        - Product
+      requestBody:
+        description: параметры для изменения ProductVZR
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createProductVZR'
+      responses:
+        '200':
+          description: возвращает информацию о расчете
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductVZR'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      description: Изменить расчет (обновить некоторые поля)
+      operationId: patchProductComboFlight
+      tags:
+        - Product
+      requestBody:
+        description: параметры для изменения расчета
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateProductVZR'
+      responses:
+        '200':
+          description: возвращает информацию о расчете
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductVZR'
+        '400':
+          $ref: '#/components/responses/WrongParams'
+        '403':
+          $ref: '#/components/responses/ActionNotPermitted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /products:
+    get:
+      description: возвращает массив всех доступных вариантов продуктов для оформления
+      operationId: getProductTypesList
+      tags:
+        - Products
+
+      responses:
+        '200':
+          description: Список всех доступных вариантов продуктов для оформления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductTypesList'
+
+
+  '/products/{id}':
+    parameters:
+      - name: id
+        description: id варианта продукта для оформления
+        in: path
+        required: true
+
+        schema:
+          type: integer
+    get:
+      description: возвращает описание варианта продукта для оформления по его id
+      tags:
+        - Products
+      operationId: getProductTypeDescription
+
+      responses:
+        '200':
+          description: описание варианта продукта для оформления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductType'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+  '/policy/{uuid}.pdf':
+    parameters:
+      - name: uuid
+        description: uuid оформленного полиса для печати
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      description: возвращает оформленного полиса для печати по его uuid в формате pdf
+      tags:
+        - Policy
+      operationId: getProductPdf
+
+      responses:
+        '200':
+          description: оформленный полис для печати по его uuid в формате pdf
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/ProductPdf'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 
 components:
   schemas:
@@ -323,13 +618,22 @@ components:
             - RUB
           default: RUB
 
+    Currency:
+      type: string
+      enum:
+        - USD
+        - EUR
+        - RUB
+      default: RUB
+
+
     InsurenceRulesType:
-      description: 'Вид правил страхования. combi_flight - страхование пассажиров, vzr - страхование выезжающих за рубеж'
+      description: 'Вид правил страхования. combo_flight - страхование пассажиров, vzr - страхование выезжающих за рубеж'
       type: string
       enum:
         - vzr
-        - combi_flight
-      default: combi_flight
+        - combo_flight
+      default: combo_flight
 
     ProductType:
       description: Тип договора страхования
@@ -341,7 +645,7 @@ components:
         name:
           description: Название
           type: string
-        uname:
+        rules_type:
           $ref: '#/components/schemas/InsurenceRulesType'
         rules_version:
           description: 'Версия правил'
@@ -352,9 +656,15 @@ components:
 
     ProductTypesList:
       description: Список ProductType
-      type: array
-      items:
-        $ref: '#/components/schemas/ProductType'
+      allOf:
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductType'
+        - $ref: '#/components/schemas/Paginator'
+
 
     ProductState:
       description: Структура описывающая статус договора
@@ -403,31 +713,94 @@ components:
 
             state:
               $ref: '#/components/schemas/ProductState'
-            price:
-              $ref: '#/components/schemas/Money'
 
-    ShortProduct:
-      description: Информация о договоре страхования
+            price:
+              description: СП полиса
+              type: number
+              format: decimal
+
+            price_currency:
+              description: Код валюты СП
+              $ref: '#/components/schemas/Currency'
+
+    ProductBaseReadOnlyFields:
       type: object
       properties:
         id:
           type: integer
-        type:
-          $ref: '#/components/schemas/ProductType'
+        date_create:
+          type: string
+          format: date-time
+        date_modify:
+          type: string
+          format: date-time
+        date_sale:
+          type: string
+          format: date-time
+        date_cancelled:
+          type: string
+          format: date-time
+        policy_series:
+          type: string
+        policy_number:
+          type: number
+
+        pdf_url:
+          description: Ссылка на скачивание pdf
+          type: string
+          format: url
+
+        url:
+          description: Ссылка на полное описание полиса / расчета
+          type: string
+          format: url
+
         state:
           $ref: '#/components/schemas/ProductState'
         price:
-          $ref: '#/components/schemas/Money'
-
-    ShortProductList:
-      description: Список договоров страхования
-      type: array
-      items:
-        $ref: '#/components/schemas/ShortProduct'
-
+          description: СП полиса
+          type: number
+          format: decimal
+        price_currency:
+          description: Код валюты СП
+          $ref: '#/components/schemas/Currency'
 
 
-    PaginatedProductList:
+    ProductBasePolicyFields:
+      type: object
+      properties:
+        date_start:
+          type: string
+          format: date-time
+        date_end:
+          type: string
+          format: date-time
+        product_type:
+          description: id ProductType - Типа договора страхования
+          type: integer
+        agent:
+          description: id Agent
+          type: integer
+
+    ProductBase:
+      description: Общая Информация о договоре страхования
+      allOf:
+        - $ref: '#/components/schemas/ProductBasePolicyFields'
+        - $ref: '#/components/schemas/Person'
+        - $ref: '#/components/schemas/ProductBaseReadOnlyFields'
+
+
+    ProductBaseList:
+      description: Список расчетов / договоров
+      allOf:
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductBase'
+        - $ref: '#/components/schemas/Paginator'
+
       type: object
       properties:
         count:
@@ -437,7 +810,7 @@ components:
           type: integer
           description: The total number of pages
         products:
-          $ref: '#/components/schemas/ShortProductList'
+          $ref: '#/components/schemas/ProductBaseList'
 
     filterPaginatedProductList:
       description: >-
@@ -485,7 +858,7 @@ components:
             - female
             - undefined
           default: undefined
-        birthdate:
+        birthday:
           description: Дата рождения
           type: string
           format: date
@@ -544,66 +917,30 @@ components:
       items:
         $ref: '#/components/schemas/Flight'
 
-    createProductCombiFlight:
-      description: Параметры для создания расчета combi_flight - страхование пассажиров
+    createProductComboFlight:
+      description: Параметры для создания расчета combo_flight - страхование пассажиров
       type: object
       discriminator:
-        propertyName: product_type_id
-      properties:
-        product_type_id:
-          description: id продукта страхования
-          type: integer
-        insurer:
-          $ref: '#/components/schemas/Person'
-        flights:
-          $ref: '#/components/schemas/FlightList'
+        propertyName: product_type
+      allOf:
+        - $ref: '#/components/schemas/ProductBasePolicyFields'
+        - $ref: '#/components/schemas/Person'
+        - $ref: '#/components/schemas/ParamsComboFlight'
 
     createProductVZR:
       description: Параметры для создания расчета vzr - страхование выезжающих за рубеж
       type: object
       discriminator:
-        propertyName: product_type_id
-      properties:
-        product_type_id:
-          description: id продукта страхования
-          type: integer
-        insurer:
-          description: 'Застрахованный'
-          $ref: '#/components/schemas/Person'
-        med_program:
-          description: Медицинская программа
-          type: string
-          enum:
-            - A
-            - B
-            - C
-          default: A
-        insurance_limit:
-          description: Страховая сумма
-          $ref: '#/components/schemas/Money'
-
-        insurance_franshise:
-          description: Франшиза по договору
-          $ref: '#/components/schemas/Money'
-
-        date_start:
-          description: 'Начало действия полиса'
-          type: string
-          format: date-time
-        date_end:
-          description: 'Дата окончания действия полиса'
-          type: string
-          format: date-time
-        countryList:
-          description: 'Список стран'
-          type: array
-          items:
-            type: string
+        propertyName: product_type
+      allOf:
+        - $ref: '#/components/schemas/ProductBasePolicyFields'
+        - $ref: '#/components/schemas/Person'
+        - $ref: '#/components/schemas/ParamsVZR'
 
     createProduct:
       description: Параметры для создания расчета
       oneOf:
-        - $ref: '#/components/schemas/createProductCombiFlight'
+        - $ref: '#/components/schemas/createProductComboFlight'
         - $ref: '#/components/schemas/createProductVZR'
       properties:
         agent_id:
@@ -612,7 +949,7 @@ components:
     updateProduct:
       description: Параметры для обновления расчета
       oneOf:
-        - $ref: '#/components/schemas/createProductCombiFlight'
+        - $ref: '#/components/schemas/createProductComboFlight'
         - $ref: '#/components/schemas/createProductVZR'
 
     Agent:
@@ -623,14 +960,30 @@ components:
             id:
               description: Уникальный номер агента
               type: integer
-        - $ref: '#/components/schemas/AgentParams'
+        - $ref: '#/components/schemas/createAgent'
+    
     AgentList:
       description: Список агентов
-      type: array
-      items:
-        $ref: '#/components/schemas/Agent'
-    AgentParams:
-      description: агент
+      allOf:
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/Agent'
+        - $ref: '#/components/schemas/Paginator'
+
+    createAgent:
+      description: список параметров для создания / обновления Агента
+      allOf:
+        - $ref: '#/components/schemas/patchAgent'
+          required:
+             - name
+             - parent
+             - legal_type
+
+    patchAgent:
+      description: список параметров для частичного обновления Агента
       type: object
       properties:
         name:
@@ -642,8 +995,8 @@ components:
         can_create_sub_agents:
           description: Агент может создавать суб агентов
           type: boolean
-        parent_id:
-          description: Агент к которому пренадлежит данный агент
+        parent:
+          description: id Агента к которому пренадлежит данный субагент
           type: integer
         legal_type:
           description: 'Тип агента. ЮЛ, ИП, ФЛ'
@@ -656,6 +1009,7 @@ components:
         can_publish_policy:
           description: Агент может издавать договора
           type: boolean
+          default: true
 
     ErrorCode:
       type: object
@@ -676,7 +1030,7 @@ components:
       description: Подписанные данные
       type: object
       properties:
-        data:
+        query_data:
           description: Данные подписанные закрытым ключом
           type: string
         sign:
@@ -692,7 +1046,123 @@ components:
       description: Подписанный запрос на выпуск договора страхования
       allOf:
         - $ref: '#/components/schemas/SignedData'
-        - $ref: '#/components/schemas/Product'
+        #- $ref: '#/components/schemas/Product'
+
+    filterProductComboFlight:
+      description: Фильтр для ProductComboFlight
+      type: object
+
+    ProductComboFlightList:
+      description: Список ProductComboFlight
+      allOf:
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductComboFlight'
+        - $ref: '#/components/schemas/Paginator'
+
+    updateProductComboFlight:
+      description: Параметры для обновления ProductComboFlight
+      type: object
+
+    ProductComboFlight:
+      description: Модель ProductComboFlight
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ProductBase'
+        - $ref: '#/components/schemas/ParamsComboFlight'
+
+    # ***********
+
+    filterProductVZR:
+      description: Фильтр для ProductVZR
+      type: object
+
+    ProductVZRList:
+      description: Список ProductVZR
+      allOf:
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductVZR'
+        - $ref: '#/components/schemas/Paginator'
+
+    updateProductVZR:
+      description: Параметры для обновления ProductVZR
+      type: object
+
+      allOf:
+        - $ref: '#/components/schemas/createProductVZR'
+
+    ProductVZR:
+      description: Модель ProductVZR
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ProductBase'
+        - $ref: '#/components/schemas/ParamsVZR'
+
+    ParamsVZR:
+      description: Параметры для ProductVZR
+      type: object
+      properties:
+        med_program:
+          description: Программа страхования медецинских расходов
+          type: string
+          enum:
+            - A
+            - B
+            - C
+          default: A
+
+        insurance_limit:
+          description: Страховая сумма (лимит покрытия)
+          type: number
+          format: decimal
+
+        insurance_limit_currency:
+          description: Код валюты CC
+          $ref: '#/components/schemas/Currency'
+
+        countryList:
+          description: Список стран
+          type: array
+          items:
+            type: string
+            description: ALPHA3 код страны
+
+    ParamsComboFlight:
+      description: Параметры для ProductComboFlight
+      type: object
+      properties:
+        flights:
+          $ref: '#/components/schemas/FlightList'
+
+
+    ProductPdf:
+      description: полис в формате Pdf
+      type: string
+      format: binary
+      
+    Paginator:
+      description: Пагинатор
+      type: object
+      properties:
+        count:
+          description: Всего записей
+          type: integer
+        next:
+          description: Ссылка на следующую страницу
+          type: string
+          format: url
+        previous:
+          description: Ссылка на предыдущую страницу
+          type: string
+          format: url
+
 
 
   responses:
